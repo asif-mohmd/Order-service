@@ -26,7 +26,9 @@ export default class MessageHandler {
         case "make-payment":
             response = await controller.onMakePayment.bind(controller)(data);
             break;
-
+        case "get-course-purchased-users":
+            response = await controller.onGetPurchasedUsers.bind(controller)(data)
+            break;
       
 
             default:

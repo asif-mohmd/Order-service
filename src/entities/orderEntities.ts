@@ -24,6 +24,17 @@ interface LessonVideo  {
     links: string[];
 }
 
+export interface OrderData{
+    courseId : string;
+    userId : string
+    userName : string,
+    userEmail : string,
+    instructorId : string
+    courseName : string
+    courseCategory : string
+    coursePrice : string
+}
+
 
 // import Stripe from 'stripe'
 // const stripe = new Stripe(process.env.STRIPE_SECRET as string)

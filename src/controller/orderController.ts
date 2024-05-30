@@ -9,12 +9,17 @@ export class OrderController {
 
   onMakePayment = async (data: any) => {
     try {
-        console.log("-----========------------",data)
+      const courseDetails = data.courseData;
+      const userDetails = data.userData;
+      //   const userDetails = data.userDetails
+      return await this.interactor.makePayment(data);
+    } catch (err) {}
+  };
 
-      const courseDetails = data.courseData
-    //   const userDetails = data.userDetails
-      console.log(courseDetails,"-======-")
-      return await this.interactor.makePayment(data)
+  onGetPurchasedUsers = async (instructorId: string) => {
+    try {
+      //   const userDetails = data.userDetails
+      return await this.interactor.getPurchasedUsers(instructorId);
     } catch (err) {}
   };
 }

@@ -11,42 +11,62 @@ export class OrderInteractor implements OrderInteractor {
     this.repository = repository;
   }
 
-  async makePayment(courseDetails: CourseDetails): Promise<boolean | any> {
+  async getPurchasedUsers(instructorId: any): Promise<boolean | any> {
+return await this.repository.getPurchasedUsers(instructorId)
+  }
+
+  async makePayment(data: any): Promise<boolean | any> {
     try {
 
-      console.log("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")
+      const courseDetails = data.courseData;
+      const userDetails = data.userData;
+
+      const orderDetails = {
+        courseId: courseDetails._id,
+        userId: userDetails.id,
+        userName: userDetails.name,
+        userEmail: userDetails.email,
+        instructorId: courseDetails.instructorId,
+        courseName: courseDetails.courseName,
+        courseCategory: courseDetails.courseCategory,
+        coursePrice: courseDetails.coursePrice,
+      };
+
+
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],
         mode: "payment",
         success_url: `${process.env.CLIENT_SITE_URL}/payment/success`,
-        cancel_url: "http://localhost:5173/instructor",
-        client_reference_id: courseDetails._id,
+        cancel_url: `${process.env.CLIENT_SITE_URL}`,
+        client_reference_id: data._id,
         line_items: [
           {
             price_data: {
               currency: "inr",
               // Convert the string to 'unknown' first, then to 'number'
               unit_amount: (Number(courseDetails.coursePrice) as number) * 100,
-              product_data:{
-                name:courseDetails.courseName,
-                description:courseDetails.courseDescription,
-                images:[courseDetails.thumbnail]
-              }
+              product_data: {
+                name: courseDetails.courseName,
+                description: courseDetails.courseDescription,
+                images: [courseDetails.thumbnail],
+              },
             },
-            quantity:1
+            quantity: 1,
           },
         ],
       });
 
-      console.log(session,"sessionsss")
+      const createOrder = await this.repository.createOrder(orderDetails);
 
-      return session
-
-
-
+      if (createOrder) {
+        return session;
+      } else {
+        return false;
+      }
+      // console.log(session, "sessionsss");
     } catch (error) {
-      console.log("order intra errrr:",error)
-      return error
+      console.log("order intra errrr:", error);
+      return error;
     }
   }
 }
